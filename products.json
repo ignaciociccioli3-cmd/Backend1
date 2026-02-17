@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "id": 1,
+    "title": "Auriculares Inalambricos ZX",
+    "description": "Bluetooth 5.3 con cancelacion de ruido",
+    "code": "AUR-ZX-001",
+    "price": 17999,
+    "status": true,
+    "stock": 20,
+    "category": "audio",
+    "thumbnails": [
+      "https://example.com/img/auriculares-zx.jpg"
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Webcam HD",
+    "description": "1080p con microfono",
+    "code": "WEB-1080-01",
+    "price": 15999,
+    "status": true,
+    "stock": 12,
+    "category": "perifericos",
+    "thumbnails": []
+  }
+]
