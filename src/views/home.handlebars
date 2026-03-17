@@ -1,0 +1,35 @@
+<section class="panel">
+  <h2>{{pageTitle}}</h2>
+  <p class="panel-text">Productos Disponibles y sus precios</p>
+
+  <div class="table-wrapper">
+    <table class="products-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Titulo</th>
+          <th>Precio</th>
+          <th>Categoria</th>
+          <th>Stock</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#if products.length}}
+          {{#each products}}
+            <tr>
+              <td>{{this.id}}</td>
+              <td>{{this.title}}</td>
+              <td>${{this.price}}</td>
+              <td>{{this.category}}</td>
+              <td>{{this.stock}}</td>
+            </tr>
+          {{/each}}
+        {{else}}
+          <tr>
+            <td colspan="5">No hay productos cargados.</td>
+          </tr>
+        {{/if}}
+      </tbody>
+    </table>
+  </div>
+</section>

@@ -1,26 +1,37 @@
 [
   {
     "id": 1,
-    "title": "Auriculares Inalambricos ZX",
-    "description": "Bluetooth 5.3 con cancelacion de ruido",
-    "code": "AUR-ZX-001",
-    "price": 17999,
+    "title": "Sony MX 2000",
+    "description": "Auriculares inalambricos con cancelacion de ruido",
+    "code": "AUR-001",
+    "price": 120000,
     "status": true,
     "stock": 20,
     "category": "audio",
-    "thumbnails": [
-      "https://example.com/img/auriculares-zx.jpg"
-    ]
+    "thumbnails": []
   },
   {
     "id": 3,
-    "title": "Webcam HD",
-    "description": "1080p con microfono",
-    "code": "WEB-1080-01",
-    "price": 15999,
+    "title": "Samsung Webcam",
+    "description": "1080p con microfono integrado",
+    "code": "WEB-003",
+    "price": 25000,
     "status": true,
     "stock": 12,
     "category": "perifericos",
     "thumbnails": []
+  },
+  {
+    "id": 4,
+    "title": "Mouse Logitech",
+    "description": "Negro e inalámbrico",
+    "code": "MOU-002",
+    "price": 30000,
+    "status": true,
+    "stock": 5,
+    "category": "perifericos",
+    "thumbnails": [
+      "https://www.mercadolibre.com.ar/mouse-inalambrico-m280-logitech-color-negro/p/MLA6072946?pdp_filters=item_id%3AMLA1552761775&from=gshop&matt_tool=71323489&matt_word=&matt_source=google&matt_campaign_id=23390549174&matt_ad_group_id=199229765188&matt_match_type=&matt_network=g&matt_device=c&matt_creative=790066494908&matt_keyword=&matt_ad_position=&matt_ad_type=pla&matt_merchant_id=735111307&matt_product_id=MLA6072946-product&matt_product_partition_id=2455856603938&matt_target_id=pla-2455856603938&cq_src=google_ads&cq_cmp=23390549174&cq_net=g&cq_plt=gp&cq_med=pla&gad_source=1&gad_campaignid=23390549174&gbraid=0AAAAAD01zQbYZ10cZ7wMp_OBB4kJHCkYj&gclid=CjwKCAjw1N7NBhAoEiwAcPchp-aiqGOARoYZPlDRIoHkL8wyzf_D_CX7gyu0bK8aDPIrFaixJBppnxoCXYMQAvD_BwE"
+    ]
   }
 ]
