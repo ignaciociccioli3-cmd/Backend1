@@ -1,0 +1,30 @@
+<section class="panel">
+  <h2>{{pageTitle}}</h2>
+
+  {{#if products.length}}
+    <div class="table-wrapper">
+      <table class="products-table">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>ID producto</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each products}}
+            <tr>
+              <td>{{#if this.product}}{{this.product.title}}{{else}}Producto eliminado{{/if}}</td>
+              <td>{{#if this.product}}{{this.product._id}}{{else}}-{{/if}}</td>
+              <td>{{#if this.product}}${{this.product.price}}{{else}}-{{/if}}</td>
+              <td>{{this.quantity}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  {{else}}
+    <p>No hay productos en este carrito.</p>
+  {{/if}}
+</section>

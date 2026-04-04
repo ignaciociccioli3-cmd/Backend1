@@ -1,0 +1,30 @@
+<section class="panel">
+  <h2>{{pageTitle}}</h2>
+
+  <div class="detail-grid">
+    <div>
+      <p><strong>ID:</strong> {{product._id}}</p>
+      <p><strong>Titulo:</strong> {{product.title}}</p>
+      <p><strong>Descripcion:</strong> {{product.description}}</p>
+      <p><strong>Code:</strong> {{product.code}}</p>
+      <p><strong>Precio:</strong> ${{product.price}}</p>
+      <p><strong>Categoria:</strong> {{product.category}}</p>
+      <p><strong>Stock:</strong> {{product.stock}}</p>
+      <p><strong>Estado:</strong> {{#if product.status}}Disponible{{else}}No disponible{{/if}}</p>
+    </div>
+
+    <div class="form-card">
+      <h3>Agregar al carrito</h3>
+      <p class="panel-text">Si no hay carrito, se crea uno automaticamente.</p>
+
+      <label for="cartId">Cart ID</label>
+      <input id="cartId" type="text" value="{{selectedCartId}}" placeholder="Opcional: usar carrito existente" />
+
+      <button id="add-to-cart-button" data-product-id="{{product._id}}" type="button">Agregar producto</button>
+      <a id="go-to-cart-link" class="cart-link" href="#">Ver carrito</a>
+      <p id="cart-message" class="message"></p>
+    </div>
+  </div>
+</section>
+
+<script src="/js/product-detail.js"></script>

@@ -1,0 +1,74 @@
+<section class="panel">
+  <h2>{{pageTitle}}</h2>
+  <p class="panel-text">Listado de productos con filtros, orden y paginacion.</p>
+
+  <form class="filters-form" method="get" action="/products">
+    <label for="query">Filtro (categoria o true/false)</label>
+    <input id="query" name="query" type="text" value="{{queryValue}}" placeholder="Ej: notebooks, true, false" />
+
+    <label for="sort">Orden por precio</label>
+    <select id="sort" name="sort">
+      <option value="">Sin orden</option>
+      <option value="asc">Ascendente</option>
+      <option value="desc">Descendente</option>
+    </select>
+
+    <label for="limit">Limite</label>
+    <input id="limit" name="limit" type="number" min="1" value="{{limitValue}}" />
+
+    <button type="submit">Aplicar</button>
+  </form>
+
+  <div class="table-wrapper">
+    <table class="products-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Titulo</th>
+          <th>Precio</th>
+          <th>Categoria</th>
+          <th>Estado</th>
+          <th>Stock</th>
+          <th>Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#if payload.length}}
+          {{#each payload}}
+            <tr>
+              <td>{{this._id}}</td>
+              <td>{{this.title}}</td>
+              <td>${{this.price}}</td>
+              <td>{{this.category}}</td>
+              <td>{{#if this.status}}Disponible{{else}}No disponible{{/if}}</td>
+              <td>{{this.stock}}</td>
+              <td><a href="/products/{{this._id}}">Ver detalle</a></td>
+            </tr>
+          {{/each}}
+        {{else}}
+          <tr>
+            <td colspan="7">No hay productos cargados.</td>
+          </tr>
+        {{/if}}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination-controls">
+    <p>Pagina {{page}} de {{totalPages}}</p>
+
+    <div class="pagination-links">
+      {{#if hasPrevPage}}
+        <a href="{{prevLink}}">Anterior</a>
+      {{/if}}
+
+      {{#if hasNextPage}}
+        <a href="{{nextLink}}">Siguiente</a>
+      {{/if}}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.getElementById("sort").value = "{{sortValue}}";
+</script>
