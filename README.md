@@ -1,54 +1,30 @@
-# Entrega Final - API de Productos y Carritos (MongoDB)
+# Backend 1 - Entrega final
 
-Proyecto Node.js + Express + Handlebars + Socket.IO con persistencia en MongoDB (Mongoose).
+Hola, este repo es mi entrega final de Backend.
+
+La app esta hecha con Express + Handlebars + Socket.IO y ahora guarda todo en MongoDB (ya no en archivos JSON como persistencia principal).
+
+## Lo importante que tiene
+
+- CRUD de productos
+- Carritos con todas las rutas pedidas
+- Relacion cart -> products con `ref` y `populate`
+- Paginacion/filtro/orden en productos
+- Vistas:
+  - `/products`
+  - `/products/:pid`
+  - `/carts/:cid`
+  - `/realtimeproducts`
 
 ## Stack
 
-- Node.js (ES Modules)
+- Node.js
 - Express
+- Mongoose
 - express-handlebars
-- socket.io
-- mongoose
-- mongoose-paginate-v2
-- dotenv
+- Socket.IO
 
-## Arquitectura (alineada a clases 08/09)
-
-Flujo principal:
-
-`DB -> Repository -> Service -> Controller -> Router`
-
-Estructura actual:
-
-```text
-src/
-  config/
-    db-connection.js
-  models/
-    product-model.js
-    cart-model.js
-  repositories/
-    product-repository.js
-    cart-repository.js
-  services/
-    product-service.js
-    cart-service.js
-  controllers/
-    product-controller.js
-    cart-controller.js
-    view-controller.js
-  routes/
-    product-router.js
-    cart-router.js
-    views-router.js
-  middlewares/
-    error-handler.js
-  views/
-  public/
-  server.js
-```
-
-## Configuracion
+## Como levantarlo
 
 1. Instalar dependencias:
 
@@ -56,92 +32,70 @@ src/
 npm install
 ```
 
-2. Crear archivo `.env` en la raiz (o copiar de `.env.example`):
+2. Crear `.env` (si queres, copiar de `.env.example`):
 
 ```env
 PORT=8080
 MONGO_URI=mongodb://127.0.0.1:27017/electroproducts
 ```
 
-3. Levantar servidor:
+3. Correr:
 
 ```bash
 npm run dev
 ```
 
-Tambien:
+Tambien funciona con:
 
 ```bash
 npm start
 ```
 
-Servidor: `http://localhost:8080`
+## Estructura (tipo clase 8/9)
 
-## Persistencia
+Quedo organizada por capas:
 
-La persistencia principal es MongoDB.
+`DB -> Repository -> Service -> Controller -> Router`
 
-Modelos:
+Carpetas principales:
 
-- `Product`
-- `Cart` con `products.product` referenciando `Product`
+- `src/config`
+- `src/models`
+- `src/repositories`
+- `src/services`
+- `src/controllers`
+- `src/routes`
+- `src/views`
+- `src/public`
 
-## Rutas API
+## Rutas de API
 
-### Productos - `/api/products`
+### Productos
 
-- `GET /api/products`
-  - Query params opcionales:
-    - `limit` (default `10`)
-    - `page` (default `1`)
-    - `sort=asc|desc` (ordena por `price`)
-    - `query`
-      - `true` / `false` filtra por `status`
-      - cualquier otro valor filtra por `category`
-
-  Respuesta:
-
-```json
-{
-  "status": "success",
-  "payload": [],
-  "totalPages": 0,
-  "prevPage": null,
-  "nextPage": null,
-  "page": 1,
-  "hasPrevPage": false,
-  "hasNextPage": false,
-  "prevLink": null,
-  "nextLink": null
-}
-```
-
+- `GET /api/products` (acepta `limit`, `page`, `sort`, `query`)
 - `GET /api/products/:pid`
 - `POST /api/products`
 - `PUT /api/products/:pid`
 - `DELETE /api/products/:pid`
 
-### Carritos - `/api/carts`
+### Carritos
 
 - `POST /api/carts`
-- `GET /api/carts/:cid` (con `populate` de productos)
+- `GET /api/carts/:cid`
 - `POST /api/carts/:cid/products/:pid`
 - `DELETE /api/carts/:cid/products/:pid`
 - `PUT /api/carts/:cid`
-  - Reemplaza todo el arreglo `products`
 - `PUT /api/carts/:cid/products/:pid`
-  - Actualiza solo `quantity`
 - `DELETE /api/carts/:cid`
-  - Vacia el carrito
 
 ## Vistas
 
-- `GET /products`: listado con paginacion, filtro y orden
-- `GET /products/:pid`: detalle + boton para agregar al carrito
-- `GET /carts/:cid`: productos del carrito seleccionado
-- `GET /realtimeproducts`: alta/baja en tiempo real con Socket.IO
+- `GET /products`
+- `GET /products/:pid`
+- `GET /carts/:cid`
+- `GET /realtimeproducts`
 
-## Notas
+## Nota
 
-- Los IDs son `ObjectId` de MongoDB (string), no numericos.
-- Para usar Mongo local, asegurate de tener el servicio levantado.
+- Los IDs ahora son `ObjectId` de Mongo.
+- Si usas Atlas, revisa que tu `MONGO_URI` apunte a la DB correcta (`electroproducts`).
