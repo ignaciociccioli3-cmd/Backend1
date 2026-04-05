@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Product } from "../models/product.model.js";
+import { productRepository } from "../repositories/product-repository.js";
 
 const createError = (status, message) => {
   const error = new Error(message);
@@ -7,7 +7,11 @@ const createError = (status, message) => {
   return error;
 };
 
-class ProductManager {
+class ProductService {
+  constructor(repository) {
+    this.repository = repository;
+  }
+
   validateRequiredFields(data) {
     const requiredFields = [
       "title",
@@ -48,19 +52,11 @@ class ProductManager {
 
     const normalizedQuery = String(query).trim();
 
-    if (normalizedQuery === "true") {
+    if (normalizedQuery === "true" || normalizedQuery === "available") {
       return { status: true };
     }
 
-    if (normalizedQuery === "false") {
-      return { status: false };
-    }
-
-    if (normalizedQuery === "available") {
-      return { status: true };
-    }
-
-    if (normalizedQuery === "unavailable") {
+    if (normalizedQuery === "false" || normalizedQuery === "unavailable") {
       return { status: false };
     }
 
@@ -95,31 +91,33 @@ class ProductManager {
     return `${baseUrl}?${params.toString()}`;
   }
 
-  async getAll() {
-    return Product.find().lean();
-  }
+  getAll = async () => {
+    return this.repository.getAll();
+  };
 
-  async getPaginated({ limit, page, sort, query, baseUrl }) {
+  getPaginated = async ({ limit, page, sort, query, baseUrl }) => {
     const parsedLimit = Number.parseInt(limit, 10);
     const parsedPage = Number.parseInt(page, 10);
 
-    const normalizedLimit = Number.isInteger(parsedLimit) && parsedLimit > 0 ? parsedLimit : 10;
-    const normalizedPage = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+    const normalizedLimit =
+      Number.isInteger(parsedLimit) && parsedLimit > 0 ? parsedLimit : 10;
+    const normalizedPage =
+      Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
 
     const filter = this.normalizeQueryFilter(query);
     const sortOption = this.normalizeSort(sort);
 
-    const paginateOptions = {
+    const options = {
       limit: normalizedLimit,
       page: normalizedPage,
       lean: true,
     };
 
     if (sortOption) {
-      paginateOptions.sort = sortOption;
+      options.sort = sortOption;
     }
 
-    const result = await Product.paginate(filter, paginateOptions);
+    const result = await this.repository.paginate(filter, options);
 
     return {
       status: "success",
@@ -145,51 +143,51 @@ class ProductManager {
           })
         : null,
     };
-  }
+  };
 
-  async getById(pid) {
-    if (!mongoose.Types.ObjectId.isValid(pid)) {
+  getById = async (id) => {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return null;
     }
 
-    return Product.findById(pid).lean();
-  }
+    return this.repository.getById(id);
+  };
 
-  async addProduct(data) {
-    this.validateRequiredFields(data);
+  addProduct = async (body) => {
+    this.validateRequiredFields(body);
 
-    const price = this.normalizeNumericField(data.price, "price");
-    const stock = this.normalizeNumericField(data.stock, "stock");
+    const price = this.normalizeNumericField(body.price, "price");
+    const stock = this.normalizeNumericField(body.stock, "stock");
 
-    if (data.status !== undefined && typeof data.status !== "boolean") {
+    if (body.status !== undefined && typeof body.status !== "boolean") {
       throw createError(400, "status must be a boolean");
     }
 
-    if (data.thumbnails !== undefined && !Array.isArray(data.thumbnails)) {
+    if (body.thumbnails !== undefined && !Array.isArray(body.thumbnails)) {
       throw createError(400, "thumbnails must be an array of strings");
     }
 
-    const duplicatedCode = await Product.exists({ code: data.code });
+    const duplicatedCode = await this.repository.existsByCode(body.code);
     if (duplicatedCode) {
       throw createError(400, "Code already exists");
     }
 
-    const newProduct = await Product.create({
-      title: data.title,
-      description: data.description,
-      code: data.code,
+    const created = await this.repository.create({
+      title: body.title,
+      description: body.description,
+      code: body.code,
       price,
-      status: typeof data.status === "boolean" ? data.status : true,
+      status: typeof body.status === "boolean" ? body.status : true,
       stock,
-      category: data.category,
-      thumbnails: Array.isArray(data.thumbnails) ? data.thumbnails : [],
+      category: body.category,
+      thumbnails: Array.isArray(body.thumbnails) ? body.thumbnails : [],
     });
 
-    return newProduct.toObject();
-  }
+    return created.toObject();
+  };
 
-  async updateProduct(pid, fields) {
-    if (!mongoose.Types.ObjectId.isValid(pid)) {
+  updateProduct = async (id, fields) => {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return null;
     }
 
@@ -198,10 +196,10 @@ class ProductManager {
     delete updates._id;
 
     if (updates.code !== undefined) {
-      const duplicatedCode = await Product.exists({
-        code: updates.code,
-        _id: { $ne: pid },
-      });
+      const duplicatedCode = await this.repository.existsByCodeAndDifferentId(
+        id,
+        updates.code
+      );
 
       if (duplicatedCode) {
         throw createError(400, "Code already exists");
@@ -224,21 +222,17 @@ class ProductManager {
       throw createError(400, "thumbnails must be an array of strings");
     }
 
-    return Product.findByIdAndUpdate(pid, updates, {
-      new: true,
-      runValidators: true,
-      lean: true,
-    });
-  }
+    return this.repository.update(id, updates);
+  };
 
-  async deleteProduct(pid) {
-    if (!mongoose.Types.ObjectId.isValid(pid)) {
+  deleteProduct = async (id) => {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return false;
     }
 
-    const result = await Product.deleteOne({ _id: pid });
+    const result = await this.repository.delete(id);
     return result.deletedCount > 0;
-  }
+  };
 }
 
-export const productManager = new ProductManager();
+export const productService = new ProductService(productRepository);

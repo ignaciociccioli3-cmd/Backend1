@@ -5,11 +5,12 @@ import { fileURLToPath } from "url";
 import express from "express";
 import { engine } from "express-handlebars";
 import { Server as SocketIOServer } from "socket.io";
-import { connectDB } from "./config/db.js";
-import { productManager } from "./managers/product-manager.js";
+import { connectMongoDB } from "./config/db-connection.js";
+import { productService } from "./services/product-service.js";
 import { productRouter } from "./routes/product-router.js";
 import { cartRouter } from "./routes/cart-router.js";
 import { viewsRouter } from "./routes/views-router.js";
+import { errorHandler } from "./middlewares/error-handler.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,14 +34,16 @@ app.use("/", viewsRouter);
 app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
 
+app.use(errorHandler);
+
 const emitProducts = async () => {
-  const products = await productManager.getAll();
+  const products = await productService.getAll();
   io.emit("productsUpdated", products);
 };
 
 io.on("connection", async (socket) => {
   try {
-    const products = await productManager.getAll();
+    const products = await productService.getAll();
     socket.emit("productsUpdated", products);
   } catch (error) {
     socket.emit("productActionError", error.message);
@@ -48,7 +51,7 @@ io.on("connection", async (socket) => {
 
   socket.on("createProduct", async (productData) => {
     try {
-      await productManager.addProduct(productData);
+      await productService.addProduct(productData);
       await emitProducts();
       socket.emit("productActionSuccess", "Producto creado correctamente");
     } catch (error) {
@@ -58,9 +61,9 @@ io.on("connection", async (socket) => {
 
   socket.on("deleteProduct", async (pid) => {
     try {
-      const wasDeleted = await productManager.deleteProduct(pid);
+      const deleted = await productService.deleteProduct(pid);
 
-      if (!wasDeleted) {
+      if (!deleted) {
         socket.emit("productActionError", "Product not found");
         return;
       }
@@ -73,9 +76,9 @@ io.on("connection", async (socket) => {
   });
 });
 
-const startServer = async () => {
+const init = async () => {
   try {
-    await connectDB();
+    await connectMongoDB();
 
     httpServer.listen(port, () => {
       console.log(`Server running on port ${port}`);
@@ -86,4 +89,4 @@ const startServer = async () => {
   }
 };
 
-startServer();
+init();

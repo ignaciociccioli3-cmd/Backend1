@@ -12,6 +12,42 @@ Proyecto Node.js + Express + Handlebars + Socket.IO con persistencia en MongoDB 
 - mongoose-paginate-v2
 - dotenv
 
+## Arquitectura (alineada a clases 08/09)
+
+Flujo principal:
+
+`DB -> Repository -> Service -> Controller -> Router`
+
+Estructura actual:
+
+```text
+src/
+  config/
+    db-connection.js
+  models/
+    product-model.js
+    cart-model.js
+  repositories/
+    product-repository.js
+    cart-repository.js
+  services/
+    product-service.js
+    cart-service.js
+  controllers/
+    product-controller.js
+    cart-controller.js
+    view-controller.js
+  routes/
+    product-router.js
+    cart-router.js
+    views-router.js
+  middlewares/
+    error-handler.js
+  views/
+  public/
+  server.js
+```
+
 ## Configuracion
 
 1. Instalar dependencias:
@@ -97,44 +133,6 @@ Modelos:
   - Actualiza solo `quantity`
 - `DELETE /api/carts/:cid`
   - Vacia el carrito
-
-## Ejemplos de body
-
-### Crear producto - `POST /api/products`
-
-```json
-{
-  "title": "Notebook Lenovo",
-  "description": "Notebook 15 pulgadas",
-  "code": "LEN-15-I5",
-  "price": 1500,
-  "stock": 8,
-  "category": "notebooks",
-  "status": true,
-  "thumbnails": ["https://example.com/lenovo-front.jpg"]
-}
-```
-
-### Reemplazar productos del carrito - `PUT /api/carts/:cid`
-
-```json
-{
-  "products": [
-    {
-      "product": "66f0aabbccddeeff00112233",
-      "quantity": 2
-    }
-  ]
-}
-```
-
-### Actualizar cantidad de un producto en carrito - `PUT /api/carts/:cid/products/:pid`
-
-```json
-{
-  "quantity": 3
-}
-```
 
 ## Vistas
 
